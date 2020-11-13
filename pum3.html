@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pum3</title>
+</head>
+<body>
+<canvas id="canvas" style="background-color:black" width="800" height="600"></canvas>
+<script>
+    let canvas = document.getElementById('canvas');
+    let context = canvas.getContext('2d');
+    let road = new Image;
+    road.src = "./images/road.png";
+    let bonus = new Image;
+    bonus.src = "./images/bonus.png";
+    let roadworks = new Image;
+    roadworks.src = "./images/roadworks.png";
+    road.onload = () => {
+        requestAnimationFrame(loop);
+    }
+    var keys = {};
+    window.addEventListener('keydown', function (e) {
+        keys[e.keyCode] = true;
+        e.preventDefault();
+    });
+    window.addEventListener('keyup', function (e) {
+        delete keys[e.keyCode];
+    });
+
+    function drawCar(posX, posY) {
+        drawWheel(posX, posY + 10);
+        drawWheel(posX, posY + 70);
+        drawWheel(posX + 50, posY + 10);
+        drawWheel(posX + 50, posY + 70);
+        drawCockpit(posX, posY);
+    }
+
+    function drawWheel(x, y) {
+        context.beginPath();
+        context.arc(x, y, 5, 0, 2 * Math.PI);
+        context.fillStyle = '#AA55DD';
+        context.fill();
+        context.closePath();
+    }
+
+    function drawCockpit(x, y) {
+        context.beginPath();
+        context.rect(x, y, 50, 80);
+        context.fillStyle = '#b11c1c';
+        context.fill();
+        context.closePath();
+    }
+
+    var offset = -512;
+    var carPositionX = 140;
+    var speedGame = 1;
+    var constructionX = Math.floor(Math.random() * 500) + 140;
+    var constructionY = -10;
+    var bonusX = Math.floor(Math.random() * 500) + 140;
+    var bonusY = -10;
+    var scorePoints = 0;
+
+    function drawScore(score) {
+        context.font = "30px Comic Sans MS";
+        context.fillStyle = "red";
+        context.textAlign = "center";
+        context.fillText("Score:" + score, canvas.width / 2, 40);
+    }
+
+    function hitRect(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
+        if (r1x + r1w >= r2x &&
+            r1x <= r2x + r2w &&
+            r1y + r1h >= r2y &&
+            r1y <= r2y + r2h) {
+            console.log("r1x " + r1x);
+            console.log("r1y " + r1y);
+            console.log("r1w " + r1w);
+            console.log("r1h " + r1h);
+            console.log("r2x " + r2x);
+            console.log("r2y " + r2y);
+            console.log("r2w " + r2w);
+            console.log("r2h " + r2h);
+            return true;
+        }
+        return false;
+    }
+
+    function collisionDetection() {
+        if (hitRect(Math.floor(bonusX), Math.floor(bonusY), 34, 34, Math.floor(carPositionX), 500, 80, 50)) {
+            scorePoints++;
+            bonusX = Math.floor(Math.random() * 500) + 140;
+            bonusY = -10 - Math.floor(Math.random() * 100);
+            speedGame = speedGame*1.25;
+
+        }
+        if (hitRect(Math.floor(constructionX), Math.floor(constructionY), 12, 36, Math.floor(carPositionX), 500, 80, 50)) {
+            scorePoints--;
+            constructionX = Math.floor(Math.random() * 500) + 140;
+            constructionY = -10 - Math.floor(Math.random() * 100);
+            speedGame = speedGame*0.75;
+        }
+    }
+
+    function loop() {
+        if (offset >= 0) offset = -512;
+        context.drawImage(road, 0, offset);
+        context.drawImage(road, 0, offset + 512);
+        context.drawImage(road, 0, offset + 1024);
+        collisionDetection();
+
+        context.drawImage(roadworks, constructionX, constructionY += speedGame);
+        if (constructionY >= 600) {
+            constructionX = Math.floor(Math.random() * 500) + 140;
+            constructionY = -10 - Math.floor(Math.random() * 100);
+        }
+        context.drawImage(bonus, bonusX, bonusY += speedGame);
+        if (bonusY >= 600) {
+            bonusX = Math.floor(Math.random() * 500) + 140;
+            bonusY = -10 - Math.floor(Math.random() * 100);
+        }
+        drawScore(scorePoints);
+        drawCar(carPositionX, 500);
+        offset += speedGame;
+
+        // steering car
+        if (39 in keys) {
+            if (carPositionX < 650) {
+                carPositionX += (speedGame + 1);
+            }
+        }
+        if (37 in keys) {
+            if (carPositionX > 142) {
+                carPositionX -= (speedGame + 1);
+            }
+        }
+        if (38 in keys) {
+            if (speedGame < 10) speedGame += 0.01;
+        }
+        if (40 in keys) {
+            if (speedGame > 1) speedGame -= 0.03;
+        }
+        window.requestAnimationFrame(loop);
+    }
+
+</script>
+</body>
+</html>
