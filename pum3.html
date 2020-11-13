@@ -6,6 +6,25 @@
 </head>
 <body>
 <canvas id="canvas" style="background-color:black" width="800" height="600"></canvas>
+<style>
+    button {
+        flex: 1;
+        padding: 20px;
+    }
+</style>
+<div style="display: flex">
+    <button
+            onmousedown="turnLeft()"
+            ontouchstart="turnLeft()"><
+    </button>
+    <button
+            onmousedown="shoot()">SHOOT
+    </button>
+    <button
+            onmousedown="turnRight()"
+            ontouchstart="turnRight()">
+    </button>
+</div>
 <script>
     let canvas = document.getElementById('canvas');
     let context = canvas.getContext('2d');
@@ -72,17 +91,17 @@
             r1x <= r2x + r2w &&
             r1y + r1h >= r2y &&
             r1y <= r2y + r2h) {
-            console.log("r1x " + r1x);
-            console.log("r1y " + r1y);
-            console.log("r1w " + r1w);
-            console.log("r1h " + r1h);
-            console.log("r2x " + r2x);
-            console.log("r2y " + r2y);
-            console.log("r2w " + r2w);
-            console.log("r2h " + r2h);
             return true;
         }
         return false;
+    }
+
+    function rotateAndPaintImage(context, image, angleInRad, positionX, positionY, axisX, axisY) {
+        context.translate(positionX, positionY);
+        context.rotate(angleInRad);
+        context.drawImage(image, -axisX, -axisY);
+        context.rotate(-angleInRad);
+        context.translate(-positionX, -positionY);
     }
 
     function collisionDetection() {
@@ -90,19 +109,69 @@
             scorePoints++;
             bonusX = Math.floor(Math.random() * 500) + 140;
             bonusY = -10 - Math.floor(Math.random() * 100);
-            speedGame = speedGame*1.25;
+            speedGame = speedGame * 1.25;
 
         }
         if (hitRect(Math.floor(constructionX), Math.floor(constructionY), 12, 36, Math.floor(carPositionX), 500, 80, 50)) {
             scorePoints--;
             constructionX = Math.floor(Math.random() * 500) + 140;
             constructionY = -10 - Math.floor(Math.random() * 100);
-            speedGame = speedGame*0.75;
+            speedGame = speedGame * 0.75;
+        }
+        if (hitRect(Math.floor(constructionX), Math.floor(constructionY), 12, 36, Math.floor(bulletX), Math.floor(bulletY), 5, 5)) {
+            scorePoints++;
+            constructionX = Math.floor(Math.random() * 500) + 140;
+            constructionY = -10 - Math.floor(Math.random() * 100);
+        }
+        if (hitRect(Math.floor(bonusX), Math.floor(bonusY), 34, 34, Math.floor(bulletX), Math.floor(bulletY), 5, 5)) {
+            bonusX = Math.floor(Math.random() * 500) + 140;
+            bonusY = -10 - Math.floor(Math.random() * 100);
         }
     }
 
+    function turnLeft() {
+        if (carPositionX > 142) {
+            carPositionX -= (speedGame + 1);
+        }
+    }
+
+    function turnRight() {
+        if (carPositionX < 650) {
+            carPositionX += (speedGame + 1);
+        }
+    }
+
+    function acceleration() {
+        if (speedGame < 10) speedGame += 0.01;
+    }
+
+    function brake() {
+        if (speedGame > 1) speedGame -= 0.03;
+    }
+
+    var bulletX = 0;
+    var bulletY = 0;
+
+    function shoot() {
+        if (bulletY <= 0) {
+            bulletX = carPositionX + 25;
+            bulletY = 500;
+        }
+    }
+
+    function drawBullet(offset) {
+        context.beginPath();
+        context.rect(bulletX, bulletY, 5, 5);
+        context.fillStyle = '#8332a7';
+        context.fill();
+        context.closePath();
+        bulletY -= offset;
+    }
+
+
     function loop() {
         if (offset >= 0) offset = -512;
+        rotateAndPaintImage(context, road, 45, 70, 70, 70, 70);
         context.drawImage(road, 0, offset);
         context.drawImage(road, 0, offset + 512);
         context.drawImage(road, 0, offset + 1024);
@@ -120,24 +189,25 @@
         }
         drawScore(scorePoints);
         drawCar(carPositionX, 500);
+        drawBullet(speedGame);
         offset += speedGame;
 
         // steering car
         if (39 in keys) {
-            if (carPositionX < 650) {
-                carPositionX += (speedGame + 1);
-            }
+            turnRight();
         }
         if (37 in keys) {
-            if (carPositionX > 142) {
-                carPositionX -= (speedGame + 1);
-            }
+            turnLeft();
         }
         if (38 in keys) {
-            if (speedGame < 10) speedGame += 0.01;
+            acceleration();
         }
         if (40 in keys) {
-            if (speedGame > 1) speedGame -= 0.03;
+            brake();
+        }
+        if (32 in keys) {
+            if (bulletY <= 0)
+                shoot();
         }
         window.requestAnimationFrame(loop);
     }
