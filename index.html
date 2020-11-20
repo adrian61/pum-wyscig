@@ -14,15 +14,20 @@
 </style>
 <div style="display: flex">
     <button
-            onmousedown="turnLeft()"
-            ontouchstart="turnLeft()"><
+            onmousedown="turnLeftPhone()"
+            onmouseup="stopTurningPhone()"
+            ontouchstart="turnLeftPhone()"
+            ontouchend="stopTurningPhone()"
+    ><
     </button>
     <button
             onmousedown="shoot()">SHOOT
     </button>
     <button
-            onmousedown="turnRight()"
-            ontouchstart="turnRight()">
+            onmousedown="turnRightPhone()"
+            onmouseup="stopTurningPhone()"
+            ontouchstart="turnRightPhone()"
+            ontouchend="stopTurningPhone()">
     </button>
 </div>
 <script>
@@ -123,18 +128,31 @@
             constructionX = Math.floor(Math.random() * 500) + 140;
             constructionY = -10 - Math.floor(Math.random() * 100);
         }
-        if (hitRect(Math.floor(bonusX), Math.floor(bonusY), 34, 34, Math.floor(bulletX), Math.floor(bulletY), 5, 5)) {
+        if (hitRect(Math.floor(bonusX), Math.floor(bonusY), 34, 34, Math.floor(bulletX), Math.floor(bulletY), 9, 9)) {
             bonusX = Math.floor(Math.random() * 500) + 140;
             bonusY = -10 - Math.floor(Math.random() * 100);
         }
     }
-
     function turnLeft() {
         if (carPositionX > 142) {
             carPositionX -= (speedGame + 1);
         }
     }
+    function turnLeftPhone() {
 
+        if (carPositionX > 142) {
+            carPositionX -= (speedGame + 11);
+        }
+    }
+
+    function turnRightPhone() {
+        if (carPositionX > 142) {
+            carPositionX += (speedGame + 11);
+        }
+    }
+    function stopTurningPhone() {
+
+    }
     function turnRight() {
         if (carPositionX < 650) {
             carPositionX += (speedGame + 1);
@@ -161,8 +179,8 @@
 
     function drawBullet(offset) {
         context.beginPath();
-        context.rect(bulletX, bulletY, 5, 5);
-        context.fillStyle = '#8332a7';
+        context.rect(bulletX, bulletY, 9, 9);
+        context.fillStyle = '#00ff03';
         context.fill();
         context.closePath();
         bulletY -= offset;
@@ -189,7 +207,7 @@
         }
         drawScore(scorePoints);
         drawCar(carPositionX, 500);
-        drawBullet(speedGame);
+        drawBullet(speedGame+3);
         offset += speedGame;
 
         // steering car
