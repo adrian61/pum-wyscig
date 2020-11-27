@@ -183,6 +183,7 @@
         }
 
         function handleOrientation(event) {
+            var xOld = 0;
             var x = event.beta;  // In degree in the range [-180,180]
             var y = event.gamma; // In degree in the range [-90,90]
 
@@ -206,7 +207,8 @@
             if (carPositionX > 142) {
                 carPositionX -= (speedGame + 1);
             }
-            speedGame = x;
+            
+            speedGame = x/25;
             if (speedGame < 1) speedGame += 0.01;
             if (speedGame > 10) speedGame -= 0.03;
             if (speedGame >15) speedGame = 10;
