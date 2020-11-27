@@ -207,8 +207,10 @@
                 carPositionX -= (speedGame + 1);
             }
             speedGame = x;
-            if (speedGame < 10) speedGame += 0.01;
-            if (speedGame > 1) speedGame -= 0.03;
+            if (speedGame < 1) speedGame += 0.01;
+            if (speedGame > 10) speedGame -= 0.03;
+            if (speedGame >15) speedGame = 10;
+            if (speedGame < 0) speedGame = 0.01;
         }
 
         function loop() {
