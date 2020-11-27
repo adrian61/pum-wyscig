@@ -206,7 +206,7 @@
             if (carPositionX > 142) {
                 carPositionX -= (speedGame + 1);
             }
-            speedGame = (600 * x / 180 - 10);
+            speedGame = x;
             if (speedGame < 10) speedGame += 0.01;
             if (speedGame > 1) speedGame -= 0.03;
         }
