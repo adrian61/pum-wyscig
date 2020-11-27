@@ -25,8 +25,8 @@
                 </button>
     </div>
     <script>
-        
-       
+
+
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
         let road = new Image;
@@ -199,7 +199,7 @@
 
             // 10 is half the size of the ball
             // It center the positioning point to the center of the ball
-           // carPositionY = (800 * y / 180 - 10) + "px";
+            // carPositionY = (800 * y / 180 - 10) + "px";
             carPositionX = (600 * y / 180 - 10);
             if (carPositionX < 650) {
                 carPositionX += (speedGame + 1);
@@ -207,12 +207,12 @@
             if (carPositionX > 142) {
                 carPositionX -= (speedGame + 1);
             }
-            
-            speedGame = x/15;
+
+            speedGame = x / 15;
             if (speedGame < 1) speedGame += 0.01;
-            if (speedGame > 15) speedGame -= 0.03;
-            // if (speedGame >15) speedGame = 10;
-            // if (speedGame < 0) speedGame = 0.01;
+            if (speedGame > 20) speedGame -= 0.03;
+            if (speedGame > 22) speedGame = 20;
+            if (speedGame < 0) speedGame = 0.01;
         }
 
         function loop() {
