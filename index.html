@@ -84,7 +84,7 @@
             context.font = "30px Comic Sans MS";
             context.fillStyle = "red";
             context.textAlign = "center";
-            context.fillText("Score:" + score, canvas.width / 2, 40);
+            context.fillText("Score:" + speedGame, canvas.width / 2, 40);
         }
 
         function hitRect(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
@@ -206,6 +206,9 @@
             if (carPositionX > 142) {
                 carPositionX -= (speedGame + 1);
             }
+            speedGame = (600 * x / 180 - 10);
+            if (speedGame < 10) speedGame += 0.01;
+            if (speedGame > 1) speedGame -= 0.03;
         }
 
         function loop() {
