@@ -25,13 +25,8 @@
                 </button>
     </div>
     <script>
-        let acl = new Accelerometer({ frequency: 60 });
-        acl.addEventListener('reading', () => {
-            console.log("Acceleration along the X-axis " + acl.x);
-            console.log("Acceleration along the Y-axis " + acl.y);
-            console.log("Acceleration along the Z-axis " + acl.z);
-        });
-        acl.start();
+        
+       
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
         let road = new Image;
@@ -187,8 +182,30 @@
             bulletY -= offset;
         }
 
+        function handleOrientation(event) {
+            var x = event.beta;  // In degree in the range [-180,180]
+            var y = event.gamma; // In degree in the range [-90,90]
+
+            // Because we don't want to have the device upside down
+            // We constrain the x value to the range [-90,90]
+            if (x > 90) { x = 90 };
+            if (x < -90) { x = -90 };
+
+            // To make computation easier we shift the range of 
+            // x and y to [0,180]
+            x += 90;
+            y += 90;
+
+            // 10 is half the size of the ball
+            // It center the positioning point to the center of the ball
+           // carPositionY = (800 * y / 180 - 10) + "px";
+            carPositionX = (600 * x / 180 - 10);
+        }
 
         function loop() {
+            window.addEventListener('deviceorientation', handleOrientation);
+            console.log(carPositionX);
+            //console.log(carPositionY);
             if (offset >= 0) offset = -512;
             rotateAndPaintImage(context, road, 45, 70, 70, 70, 70);
             context.drawImage(road, 0, offset);
