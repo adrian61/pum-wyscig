@@ -89,10 +89,10 @@
             // carPositionY = (800 * y / 180 - 10) + "px";
             paddleX = (600 * y / 180 - 10);
             if (paddleX < 800) {
-                paddleX += (10);
+                paddleX += (20);
             }
             if (paddleX > 0) {
-                paddleX -= (10);
+                paddleX -= (20);
             }
         }
 
@@ -123,7 +123,6 @@
                             b.status = 0;
                             score++;
                             if (score == brickRowCount * brickColumnCount) {
-                                alert("YOU WIN, CONGRATS!");
                                 document.location.reload();
                             }
                         }
@@ -194,7 +193,6 @@
                     dy = -dy;
                 }
                 else {
-                    alert("GAME OVER");
                     document.location.reload();
                 }
             }
