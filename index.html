@@ -3,12 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=800">
     <title>pum3</title>
 </head>
 
 <body>
     <canvas id="canvas" style="background-color:black" width="800" height="600"></canvas>
     <style>
+        * {
+            touch-action: manipulation;
+        }
+
         button {
             flex: 1;
             padding: 20px;
@@ -70,6 +75,20 @@
             context.fill();
             context.closePath();
         }
+        function permission() {
+            if (typeof (DeviceMotionEvent) !== "undefined" && typeof (DeviceMotionEvent.requestPermission) === "function") {
+                DeviceMotionEvent.requestPermission()
+                    .then(response => {
+                        if (response === "granted") {
+                            window.addEventListener('deviceorientation', handleOrientation, true);
+                        }
+                    })
+                    .catch(console.error)
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation, true);
+            }
+        }
+        permission();
 
         var offset = -512;
         var carPositionX = 140;
