@@ -2,18 +2,32 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=800, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta charset="utf-8" />
     <title>arkanoid</title>
     <style>
-        * {
-            padding: 0;
+        body,
+        div {
             margin: 0;
+            padding: 0;
         }
 
-        canvas {
-            background: #eee;
-            display: block;
-            margin: 0 auto;
+        button {
+            margin: auto;
+            padding: 20px;
+            min-width: 150px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            background-color: #bdbdbd;
+        }
+
+        .grid-item {
+            /*padding: 20px;*/
+            /*font-size: 30px;*/
+            text-align: center;
         }
     </style>
 </head>
@@ -89,7 +103,7 @@
             // carPositionY = (800 * y / 180 - 10) + "px";
             paddleX = (600 * y / 180 - 10);
             if (paddleX < 800) {
-                paddleX += (20);
+                paddleX += (50);
             }
             if (paddleX > 0) {
                 paddleX -= (20);
@@ -212,5 +226,4 @@
     </script>
 
 </body>
-
 </html>
