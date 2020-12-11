@@ -104,7 +104,7 @@
             context.font = "30px Comic Sans MS";
             context.fillStyle = "red";
             context.textAlign = "center";
-            context.fillText("Score:" + speedGame, canvas.width / 2, 40);
+            context.fillText("Score:" + carPositionX, canvas.width / 2, 40);
         }
 
         function hitRect(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
@@ -222,10 +222,10 @@
             // carPositionY = (800 * y / 180 - 10) + "px";
             carPositionX = (600 * y / 180 - 10);
             if (carPositionX < 650) {
-                carPositionX += (speedGame + 1);
+                carPositionX += (600 * y / 180 - 10);
             }
             if (carPositionX > 142) {
-                carPositionX -= (speedGame + 1);
+                carPositionX = (speedGame + 1);
             }
 
             speedGame = x / 15;
@@ -237,8 +237,6 @@
 
         function loop() {
             window.addEventListener('deviceorientation', handleOrientation);
-            console.log(carPositionX);
-            //console.log(carPositionY);
             if (offset >= 0) offset = -512;
             rotateAndPaintImage(context, road, 45, 70, 70, 70, 70);
             context.drawImage(road, 0, offset);
