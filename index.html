@@ -220,12 +220,12 @@
             // It center the positioning point to the center of the ball
 
             xNew = (800 * y / 180 - 10);
-            if (xOld+3 < xNew) {
+            if (xOld < xNew) {
                 if (carPositionX < 650) {
                     carPositionX += (speedGame + 1);
                 }
             }
-            if (xOld+3 > xNew) {
+            if (xOld > xNew) {
                 if (carPositionX > 142) {
                     carPositionX -= (speedGame + 1);
                 }
