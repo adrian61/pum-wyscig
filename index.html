@@ -20,9 +20,11 @@
         }
     </style>
     <div style="display: flex">
+        <button onmousedown="permission()">permission ios
+        </button>
         <button onmousedown="turnLeftPhone()" onmouseup="stopTurningPhone()" ontouchstart="turnLeftPhone()"
             ontouchend="stopTurningPhone()">
-            < </button>
+            </button>
                 <button onmousedown="shoot()">SHOOT
                 </button>
                 <button onmousedown="turnRightPhone()" onmouseup="stopTurningPhone()" ontouchstart="turnRightPhone()"
@@ -88,7 +90,6 @@
                 window.addEventListener('deviceorientation', handleOrientation, true);
             }
         }
-        permission();
 
         var offset = -512;
         var carPositionX = 140;
