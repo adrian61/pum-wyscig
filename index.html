@@ -24,12 +24,12 @@
         </button>
         <button onmousedown="turnLeftPhone()" onmouseup="stopTurningPhone()" ontouchstart="turnLeftPhone()"
             ontouchend="stopTurningPhone()">
-            </button>
-                <button onmousedown="shoot()">SHOOT
-                </button>
-                <button onmousedown="turnRightPhone()" onmouseup="stopTurningPhone()" ontouchstart="turnRightPhone()"
-                    ontouchend="stopTurningPhone()">
-                </button>
+        </button>
+        <button onmousedown="shoot()">SHOOT
+        </button>
+        <button onmousedown="turnRightPhone()" onmouseup="stopTurningPhone()" ontouchstart="turnRightPhone()"
+            ontouchend="stopTurningPhone()">
+        </button>
     </div>
     <script>
 
@@ -201,9 +201,8 @@
             context.closePath();
             bulletY -= offset;
         }
-
+        var xOld = 0;
         function handleOrientation(event) {
-            var xOld = 0;
             var x = event.beta;  // In degree in the range [-180,180]
             var y = event.gamma; // In degree in the range [-90,90]
 
@@ -219,13 +218,17 @@
 
             // 10 is half the size of the ball
             // It center the positioning point to the center of the ball
-            // carPositionY = (800 * y / 180 - 10) + "px";
-            carPositionX = (600 * y / 180 - 10);
-            if (carPositionX < 650) {
-                carPositionX += (600 * y / 180 - 10);
+
+            xNew = (800 * y / 180 - 10);
+            if (xOld > xNew) {
+                if (carPositionX < 650) {
+                    carPositionX += (speedGame + 1);
+                }
             }
-            if (carPositionX > 142) {
-                carPositionX = (speedGame + 1);
+            if (xOld < xNew) {
+                if (carPositionX > 142) {
+                    carPositionX -= (speedGame + 1);
+                }
             }
 
             speedGame = x / 15;
@@ -233,6 +236,7 @@
             if (speedGame > 20) speedGame -= 0.03;
             if (speedGame > 22) speedGame = 20;
             if (speedGame < 0) speedGame = 0.01;
+            xOld = (800 * y / 180 - 10);
         }
 
         function loop() {
