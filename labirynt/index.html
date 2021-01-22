@@ -1,10 +1,340 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=800" />
+    <style>
+        * {
+            touch-action: manipulation;
+        }
+        .block {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #dd1443;
+            padding: 14px 28px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        body {
+            margin: 0;
+        }
+        .canvasStyle {
+            border: 0;
+            width: 800;
+            height: 600;
+        }
+        div {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
-<body>
 
+<body>
+<div>
+    <button id="startGameBtn" class="block" onclick="permissionIOS()">
+        Start Game
+    </button>
+</div>
+<canvas id="myCanvas" class="canvasStyle">
+</canvas>
+
+<script>
+    document.getElementById("myCanvas").hidden = true;
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.onresize = function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+    var gameOver = false;
+    var gameStarted = false;
+    var endpoint = {
+        x: (canvas.width * 9) / 10,
+        y: (canvas.height * 1) / 10,
+    };
+    var player = {
+        pos: { x: (canvas.width * 1) / 10, y: (canvas.height * 9) / 10 },
+        friction: 0.98,
+        Y: 0,
+        X: 0,
+        speed: 2,
+        diameter: 10,
+        keys: [],
+    };
+    function permissionIOS() {
+        if (
+            typeof DeviceMotionEvent !== "undefined" &&
+            typeof DeviceMotionEvent.requestPermission === "function"
+        ) {
+            DeviceMotionEvent.requestPermission()
+                .then((response) => {
+                    if (response == "granted") {
+                        window.addEventListener(
+                            "deviceorientation",
+                            handleOrientation,
+                            true
+                        );
+                    }
+                })
+                .catch(console.error);
+        } else {
+            window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+        gameStarted = true;
+        document.getElementById("myCanvas").hidden = false;
+        document.getElementById("startGameBtn").remove();
+    }
+
+    var maze1 = {
+        blocks: [],
+    };
+    maze1.blocks.push({
+        x: canvas.width / 5,
+        width: canvas.width / 5,
+        y: (canvas.height * 4) / 5,
+        height: 1,
+    });
+    maze1.blocks.push({
+        x: 0,
+        width: (canvas.width * 3) / 5,
+        y: (canvas.height * 3) / 5,
+        height: 1,
+    });
+    maze1.blocks.push({
+        x: (canvas.width * 4) / 5,
+        width: (canvas.width * 1) / 5,
+        y: (canvas.height * 3) / 5,
+        height: 1,
+    });
+    maze1.blocks.push({
+        x: (canvas.width * 1) / 5,
+        width: (canvas.width * 3) / 5,
+        y: (canvas.height * 2) / 5,
+        height: 1,
+    });
+    maze1.blocks.push({
+        x: (canvas.width * 1) / 5,
+        width: (canvas.width * 4) / 5,
+        y: (canvas.height * 1) / 5,
+        height: 1,
+    });
+    maze1.blocks.push({
+        x: (canvas.width * 4) / 5,
+        width: 1,
+        y: (canvas.height * 2) / 5,
+        height: (canvas.height * 2) / 5,
+    });
+    maze1.blocks.push({
+        x: canvas.width / 5,
+        width: 1,
+        y: (canvas.height * 4) / 5,
+        height: canvas.height / 5,
+    });
+    var maze2 = {
+        blocks: [],
+    };
+    maze2.blocks.push({
+        x: 0,
+        width: (canvas.width * 4) / 5,
+        y: (canvas.height * 1) / 5,
+        height: 1,
+    });
+    maze2.blocks.push({
+        x: (canvas.width * 3) / 5,
+        width: (canvas.width * 2) / 5,
+        y: (canvas.height * 2) / 5,
+        height: 1,
+    });
+    maze2.blocks.push({
+        x: (canvas.width * 1) / 5,
+        width: (canvas.width * 1) / 5,
+        y: (canvas.height * 3) / 5,
+        height: 1,
+    });
+    maze2.blocks.push({
+        x: (canvas.width * 1) / 5,
+        width: 1,
+        y: (canvas.height * 2) / 5,
+        height: (canvas.height * 3) / 5,
+    });
+
+    maze2.blocks.push({
+        x: (canvas.width * 3) / 5,
+        width: 1,
+        y: (canvas.height * 2) / 5,
+        height: (canvas.height * 2) / 5,
+    });
+    maze2.blocks.push({
+        x: (canvas.width * 3) / 5,
+        width: 1,
+        y: 0,
+        height: (canvas.height * 1) / 5,
+    });
+    var selectedMaze = Math.floor(Math.random() * 2) + 1 == 1 ? maze1 : maze2;
+    var FPS = 240;
+    window.onresize = function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        endpoint.x = (canvas.width * 9) / 10;
+        endpoint.y = (canvas.height * 1) / 10;
+    };
+
+
+    function handleOrientation(event) {
+        if (window.innerWidth <= window.innerHeight) {
+            player.X = event.gamma / 8;
+            player.Y = event.beta / 2;
+        } else {
+            player.X = event.beta / 2;
+            player.Y = (-1 * event.gamma) / 8;
+        }
+        if (player.X > player.speed) {
+            player.X = player.speed;
+        }
+        if (player.X < -1*player.speed) {
+            player.X = -1*player.speed;
+        }
+        if (player.Y > player.speed) {
+            player.Y=player.speed;
+        }
+        if (player.Y < -1*player.speed) {
+            player.Y=-1*player.speed;
+        }
+    }
+    window.onload = function () {
+        setInterval(function () {
+            if (!gameOver && gameStarted) {
+                playerMove();
+                ctx.fillStyle = "White";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawEndPoint();
+                drawPlayer();
+                drawBlocks();
+                if (gameOver) {
+                    ctx.font = "50px Arial";
+                    ctx.fillStyle = "red";
+                    ctx.textAlign = "center";
+                    ctx.fillText("You Won!", canvas.width / 2, canvas.height / 2);
+                }
+            }
+        }, 1000 / FPS);
+    };
+
+    function playerMove() {
+        if (player.keys[38]) {
+            if (player.Y > -player.speed) {
+                player.Y--;
+            }
+        }
+
+        if (player.keys[40]) {
+            if (player.Y < player.speed) {
+                player.Y++;
+            }
+        }
+        if (player.keys[39]) {
+            if (player.X < player.speed) {
+                player.X++;
+            }
+        }
+        if (player.keys[37]) {
+            if (player.X > -player.speed) {
+                player.X--;
+            }
+        }
+
+        player.Y *= player.friction;
+        player.pos.y += player.Y;
+        player.X *= player.friction;
+        player.pos.x += player.X;
+        for (block of selectedMaze.blocks) {
+            if (
+                block.y < player.pos.y &&
+                block.y > player.pos.y - player.diameter &&
+                player.pos.x > block.x &&
+                player.pos.x < block.x + block.width
+            ) {
+                player.pos.y = block.y + player.diameter;
+            }
+            if (
+                block.y > player.pos.y &&
+                block.y < player.pos.y + player.diameter &&
+                player.pos.x > block.x &&
+                player.pos.x < block.x + block.width
+            ) {
+                player.pos.y = block.y - player.diameter;
+            }
+            if (
+                block.x > player.pos.x &&
+                block.x < player.pos.x + player.diameter &&
+                player.pos.y > block.y &&
+                player.pos.y < block.y + block.height
+            ) {
+                player.pos.x = block.x - player.diameter;
+            }
+            if (
+                block.x < player.pos.x &&
+                block.x > player.pos.x - player.diameter &&
+                player.pos.y > block.y &&
+                player.pos.y < block.y + block.height
+            ) {
+                player.pos.x = block.x + player.diameter;
+            }
+        }
+        if (player.pos.x + player.diameter >= canvas.width) {
+            player.pos.x = canvas.width - player.diameter;
+        } else if (player.pos.x <= player.diameter) {
+            player.pos.x = player.diameter;
+        }
+
+        if (player.pos.y + player.diameter > canvas.height) {
+            player.pos.y = canvas.height - player.diameter;
+        } else if (player.pos.y <= player.diameter) {
+            player.pos.y = player.diameter;
+        }
+        if (
+            player.pos.x < endpoint.x + 20 &&
+            player.pos.x > endpoint.x - 20 &&
+            player.pos.y < endpoint.y + 20 &&
+            player.pos.y > endpoint.y - 20
+        ) {
+            gameOver = true;
+        }
+    }
+    function drawPlayer() {
+        ctx.beginPath();
+        ctx.arc(player.pos.x, player.pos.y, player.diameter, 0, 2 * Math.PI);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.stroke();
+    }
+    function drawEndPoint() {
+        ctx.beginPath();
+        ctx.arc(endpoint.x, endpoint.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "green";
+        ctx.fill();
+        ctx.stroke();
+    }
+    function drawBlocks() {
+        for (block of selectedMaze.blocks) {
+            ctx.fillStyle = "black";
+            ctx.fillRect(block.x, block.y, block.width, block.height);
+        }
+    }
+    document.body.addEventListener("keydown", function (e) {
+        player.keys[e.keyCode] = true;
+    });
+    document.body.addEventListener("keyup", function (e) {
+        player.keys[e.keyCode] = false;
+    });
+</script>
 </body>
 </html>
