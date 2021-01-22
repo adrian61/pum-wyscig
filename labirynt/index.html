@@ -100,41 +100,41 @@
         x: canvas.width / 5,
         width: canvas.width / 5,
         y: (canvas.height * 4) / 5,
-        height: 1,
+        height: 5,
     });
     maze1.blocks.push({
         x: 0,
         width: (canvas.width * 3) / 5,
         y: (canvas.height * 3) / 5,
-        height: 1,
+        height: 5,
     });
     maze1.blocks.push({
         x: (canvas.width * 4) / 5,
         width: (canvas.width * 1) / 5,
         y: (canvas.height * 3) / 5,
-        height: 1,
+        height: 5,
     });
     maze1.blocks.push({
         x: (canvas.width * 1) / 5,
         width: (canvas.width * 3) / 5,
         y: (canvas.height * 2) / 5,
-        height: 1,
+        height: 5,
     });
     maze1.blocks.push({
         x: (canvas.width * 1) / 5,
         width: (canvas.width * 4) / 5,
         y: (canvas.height * 1) / 5,
-        height: 1,
+        height: 5,
     });
     maze1.blocks.push({
         x: (canvas.width * 4) / 5,
-        width: 1,
+        width: 5,
         y: (canvas.height * 2) / 5,
         height: (canvas.height * 2) / 5,
     });
     maze1.blocks.push({
         x: canvas.width / 5,
-        width: 1,
+        width: 5,
         y: (canvas.height * 4) / 5,
         height: canvas.height / 5,
     });
@@ -145,36 +145,36 @@
         x: 0,
         width: (canvas.width * 4) / 5,
         y: (canvas.height * 1) / 5,
-        height: 1,
+        height: 5,
     });
     maze2.blocks.push({
         x: (canvas.width * 3) / 5,
         width: (canvas.width * 2) / 5,
         y: (canvas.height * 2) / 5,
-        height: 1,
+        height:5,
     });
     maze2.blocks.push({
         x: (canvas.width * 1) / 5,
         width: (canvas.width * 1) / 5,
         y: (canvas.height * 3) / 5,
-        height: 1,
+        height: 5,
     });
     maze2.blocks.push({
         x: (canvas.width * 1) / 5,
-        width: 1,
+        width: 5,
         y: (canvas.height * 2) / 5,
         height: (canvas.height * 3) / 5,
     });
 
     maze2.blocks.push({
         x: (canvas.width * 3) / 5,
-        width: 1,
+        width: 5,
         y: (canvas.height * 2) / 5,
         height: (canvas.height * 2) / 5,
     });
     maze2.blocks.push({
         x: (canvas.width * 3) / 5,
-        width: 1,
+        width: 5,
         y: 0,
         height: (canvas.height * 1) / 5,
     });
@@ -318,7 +318,7 @@
     }
     function drawEndPoint() {
         ctx.beginPath();
-        ctx.arc(endpoint.x, endpoint.y, 20, 0, 2 * Math.PI);
+        ctx.arc(endpoint.x, endpoint.y, player.diameter, 0, 2 * Math.PI);
         ctx.fillStyle = "green";
         ctx.fill();
         ctx.stroke();
